@@ -408,8 +408,8 @@ describe UnitBlobs do
 
   it "should construct a sequence line" do
     @seq2 = UnitBlobs.new( trace: $hard_trace )
-    fs = @seq2.get_states(:unit_blob=>@seq2.unit_blobs[0])
-    ss = @seq2.get_states(:unit_blob=>@seq2.unit_blobs[1])
+    #fs = @seq2.get_states(:unit_blob=>@seq2.unit_blobs[0])
+    #ss = @seq2.get_states(:unit_blob=>@seq2.unit_blobs[1])
     top_sequence_1 = @seq2.blob_for("31").get_top_sequence
     top_sequence_2 = @seq2.blob_for("00").get_top_sequence
     # top_sequence_1 = @seq2.get_top_sequences()[0] 

@@ -43,14 +43,14 @@ module OrderTrace
    trace_string.split("\n").each{|t_string|
     # find 2012-10-16 13:30:18 in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
-    $user_padding    = t_string.match(/^([ ]+)\[/)[1] rescue $user_padding =""
-    time_string = t_string.match(/^ *\[(.+?)\]/)[1]
+    $user_padding = t_string.match(/^([ ]+)\[/)[1] rescue $user_padding = ""
+    time_string   = t_string.match(/^ *\[(.+?)\]/)[1]
     # find 31 in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
-    t_unit  = t_string.match(/\[#{time_string}\] \[([0-9]+)+\]/)[1]
+    t_unit = t_string.match(/\[#{time_string}\] \[([0-9a-zA-Z_]+)+\]/)[1]
     # find P(522) in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
-    t_signal = t_string.match(/(.)?Trig->(.+?\))/)[2] rescue nil
+    t_signal = t_string.match(/(.)?->(.+?\))/)[2] rescue nil
     if( t_signal )
       # find P in
       # P(522)
