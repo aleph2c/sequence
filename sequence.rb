@@ -1,4 +1,8 @@
-require "debugger"
+begin
+  # don't break if someone hasn't installed a debugger
+  require "byebug"
+end
+
 require "time"
 require "optparse"
 module PackageConfiguration
@@ -37,27 +41,27 @@ module OrderTrace
    trace_hash = {}
    # break up the input based on there newline characters
    trace_string.split("\n").each{|t_string|
-    # find 2012-10-16 13:30:18 in 
+    # find 2012-10-16 13:30:18 in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
     $user_padding    = t_string.match(/^([ ]+)\[/)[1] rescue $user_padding =""
     time_string = t_string.match(/^ *\[(.+?)\]/)[1]
-    # find 31 in 
+    # find 31 in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
     t_unit  = t_string.match(/\[#{time_string}\] \[([0-9]+)+\]/)[1]
-    # find P(522) in  
+    # find P(522) in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
     t_signal = t_string.match(/(.)?Trig->(.+?\))/)[2] rescue nil
     if( t_signal )
       # find P in
       # P(522)
       signal_name = t_signal.match(/(.+?)\(/)[1]
-      # find 522 in 
+      # find 522 in
       # P(522)
       signal_number = t_signal.match(/\((.+)\)/)[1] rescue ""
-      # fine QualifyingAC in 
+      # fine QualifyingAC in
       # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
       t_beginning_string = t_string.match(/#{signal_number}\) (.+?)->/)[1]
-      # fine PendingAcGood in 
+      # fine PendingAcGood in
       # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
       t_ending_string = t_string.match(/#{t_beginning_string}->(.+)/)[1]
       trace_hash[item_number] = { :time=>Time.parse(time_string),
@@ -76,9 +80,9 @@ module OrderTrace
        signal_number,
        t_beginning_string,
        t_ending_string,
-       t_string ] 
+       t_string ]
 
-      item_number += 1 
+      item_number += 1
     end
    }
    trace_array
@@ -86,10 +90,10 @@ module OrderTrace
 
   # This unit blobs are just a collection of items that contain
   # information all relating to the same unit number, for instance, in the
-  # following trace item, the unit would be 31.  
+  # following trace item, the unit would be 31.
   # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
-  # This and all other trace items with this same number would have their 
-  # information 
+  # This and all other trace items with this same number would have their
+  # information
   def create_unit_blobs(spec)
    # use a hash to index the units
    unit_blob_index = {}
@@ -134,12 +138,12 @@ module OrderTrace
   end
 
   def recursively_find_init_state(spec)
-    # initialize our state to nil so we can return nil, 
+    # initialize our state to nil so we can return nil,
     # if there is nothing to be found
     init_state = nil
     unit_blob = spec[:unit_blob]
 
-    # ensure the the caller does not have to populate the
+    # ensure the caller does not have to populate the
     # specification with :states, since they probably don't
     # care about this
     states = ( spec.has_key?(:states ) ) ?
@@ -167,7 +171,7 @@ module OrderTrace
           end
         end
       }
-      # we have found what we are looking for, break out of the 
+      # we have found what we are looking for, break out of the
       # unit_blob iterator with the answer
       break
     }
@@ -183,18 +187,18 @@ module OrderTrace
   end
 
   def recursively_build_blob(spec)
-    # ensure that a caller can call without :unit_blob_so_far 
+    # ensure that a caller can call without :unit_blob_so_far
     # populated or named
     unit_blob_so_far = ( spec.has_key?(:unit_blob_so_far ) ) ?
       spec[:unit_blob_so_far] : []
-   
+
     # create a copy of the spec since we will be changing it
     # and since things are passed by reference we do not want
     # to affect the caller's object
     unit_blob = spec[:unit_blob].dup
 
     # find the initial state for this unit_blob
-    init_state = 
+    init_state =
       recursively_find_init_state( :unit_blob => unit_blob )
 
     # dealing with loops
@@ -203,11 +207,11 @@ module OrderTrace
       # have a nil in our current init_state and there will
       # be no next_initial_candidate in our spec
       if( spec[:next_initial_candidate].nil? )
-        # just use our first state as our init state and 
+        # just use our first state as our init state and
         # continue
         init_state = unit_blob[0][OrderTrace::BEGINNING_STATE]
       else
-        # we have found a loop within our list at a 
+        # we have found a loop within our list at a
         # recursion level greater than 1
         init_state = spec[:next_initial_candidate]
       end
@@ -231,7 +235,7 @@ module OrderTrace
         # we have found everything we were looking for, so
         # break and return what we have
         break
-      end 
+      end
     }
     unit_blob_so_far
   end
@@ -249,13 +253,12 @@ class Transition
     @first_state   = @trace_obj[OrderTrace::BEGINNING_STATE].strip
     @last_state    = @trace_obj[OrderTrace::END_STATE].strip
     @time_stamp    = @trace_obj[OrderTrace::TIME].to_s.strip
-    a = 1
   end
 
   def to_s
     output = ""
     newline = "\n"
-    output += "full_signal: " + @full_signal.to_s 
+    output += "full_signal: " + @full_signal.to_s
     output += newline
     output += "first_state: " + @first_state.to_s
     output += newline
@@ -283,7 +286,7 @@ class SequenceBlock
   include SequenceGlyphs
   include PackageConfiguration
   DEFAULT_DEPTH = DEFAULT_SEQUENCE_DIAGRAM_DEPTH
-  SELF_REFERENCE_DEPTH = 5 
+  SELF_REFERENCE_DEPTH = 5
   attr_reader :width, :number, :depth, :block
 
   def initialize(spec)
@@ -299,7 +302,7 @@ class SequenceBlock
       else
         @depth  = ( spec.has_key?(:depth) == true ) ? spec[:depth] : DEFAULT_DEPTH
       end
-      @block = draw() 
+      @block = draw()
     else
       @block = spec[:block]
       @depth = spec[:depth]
@@ -320,7 +323,7 @@ class SequenceBlock
       re += @@new_line
       result += re
     }
-    SequenceBlock.new( block: result, depth: @depth, redraw: true ) 
+    SequenceBlock.new( block: result, depth: @depth, redraw: true )
   end
 
   def to_s
@@ -351,12 +354,12 @@ class SequenceBlock
       if( line == 1 )
         if( named == true )
           b = @signal.center(@width, @@signal_dash )
-        else 
+        else
           b = @@signal_dash*@width
         end
-        b[ 0]  = left_attach_glyph 
-        b[ 1]  = second_from_left_point 
-        b[-1]  = right_attach_glyph 
+        b[ 0]  = left_attach_glyph
+        b[ 1]  = second_from_left_point
+        b[-1]  = right_attach_glyph
         b     += @@new_line
         block += b
       elsif( line == 2 )
@@ -380,8 +383,8 @@ class SequenceBlock
 end
 # Right Named Signal
 # +-----BB(514)---->
-# |       (?)       
-# |                 
+# |       (?)
+# |
 class RightNamedSignal < SequenceBlock
   def draw
     signal_draw(direction: :right, named: true )
@@ -389,17 +392,17 @@ class RightNamedSignal < SequenceBlock
 end
 # Named Siganal
 # +-----BB(514)-----
-# |       (?)       
-# |                 
+# |       (?)
+# |
 class NamedSignal < SequenceBlock
-  def draw 
+  def draw
     signal_draw(direction: :none, named: true )
   end
 end
 # Left Named Signal
 # +<----BB(514)----+
-# |       (?)       
-# |                 
+# |       (?)
+# |
 class LeftNamedSignal < SequenceBlock
   def draw
     signal_draw(direction: :left, named: true )
@@ -407,17 +410,17 @@ class LeftNamedSignal < SequenceBlock
 end
 # Unnamed Signal
 # +-----------------
-# |                 
-# |                 
+# |
+# |
 class UnnamedSignal < SequenceBlock
-  def draw 
+  def draw
     signal_draw(direction: :none )
   end
 end
 # Right Unnamed Signal
 # +---------------->
-# |                 
-# |                 
+# |
+# |
 class RightUnnamedSignal < SequenceBlock
   def draw
     signal_draw(direction: :right )
@@ -430,9 +433,9 @@ class LeftUnnamedSignal < SequenceBlock
   end
 end
 # Blank Signal
-# |                 
-# |                 
-# |                 
+# |
+# |
+# |
 class BlankSignal < SequenceBlock
   def draw
     block = ""
@@ -446,17 +449,17 @@ class BlankSignal < SequenceBlock
   end
 end
 # Down Named Signal
-# +                 
-#  \ (?)            
-#  BB(514)          
-#  /                
-# <                 
+# +
+#  \ (?)
+#  BB(514)
+#  /
+# <
 class DownNamedSignal < SequenceBlock
   def initialize(spec)
     super(spec)
     @depth = SELF_REFERENCE_DEPTH
   end
-  def draw 
+  def draw
     block = ""
     1.upto(SELF_REFERENCE_DEPTH){|line|
       if( line == 1 )
@@ -467,7 +470,7 @@ class DownNamedSignal < SequenceBlock
       elsif( line == 2 )
         b      = " ".center(@width)
         b[1]   = @@down_slash
-        b[3]   = @@number % { :number => @number } 
+        b[3]   = @@number % { :number => @number }
         b.slice! @width..-1
         b     += @@new_line
         block += b
@@ -506,7 +509,7 @@ class Pad < SequenceBlock
     block  = " "*half_width
     block += @@new_line
     block *= @depth
-  end 
+  end
 end
 
 class SequenceLineWriter
@@ -521,7 +524,7 @@ class SequenceLineWriter
     :rs  => RightUnnamedSignal,
     :ls  => LeftUnnamedSignal,
     :cap => Cap,
-    :pad => Pad 
+    :pad => Pad
   }
   def initialize(spec)
     @width      = spec[:width]
@@ -530,9 +533,9 @@ class SequenceLineWriter
     @instruction_set = create_instruction_set(
                         first_state_index:
                           @unique_states.find_index(@transition.first_state),
-                        last_state_index: 
+                        last_state_index:
                           @unique_states.find_index(@transition.last_state),
-                        instructions_needed: 
+                        instructions_needed:
                           @unique_states.size )
     # for testing purposes we create this object variable
     @instructions = @instruction_set.map{|x| x.to_s }.join(" + ")
@@ -541,8 +544,8 @@ class SequenceLineWriter
 
   def create_signal_spec()
     signal_spec = {}
-    signal_spec[:depth] = ( @instruction_set.include?(:dns.to_s) )? 
-      SequenceBlock::SELF_REFERENCE_DEPTH : 
+    signal_spec[:depth] = ( @instruction_set.include?(:dns.to_s) )?
+      SequenceBlock::SELF_REFERENCE_DEPTH :
       SequenceBlock::DEFAULT_DEPTH
     signal_spec[:signal] = @transition.full_signal
     raise "signal can not be nil" unless signal_spec[:signal]!=nil
@@ -561,12 +564,12 @@ class SequenceLineWriter
 
   def to_sequence_block()
     all_signals = create_all_signals()
-    signals_needed = @instruction_set.map{|s| 
+    signals_needed = @instruction_set.map{|s|
       all_signals[s.to_sym]
     }
     full_sequence_string = signals_needed.inject{|sequence_string,n| sequence_string + n }
     full_sequence_string
-  end 
+  end
 
   def to_padded_sequence_block()
     padded_sequence_block = @pad + to_sequence_block()
@@ -579,13 +582,13 @@ class SequenceLineWriter
     instructions_needed = spec[:instructions_needed]
 
     if( first_state_index == last_state_index )
-      instruction_set = 
+      instruction_set =
         create_down_arrow_instruction_set(spec)
     elsif( first_state_index < last_state_index )
-      instruction_set = 
+      instruction_set =
         create_right_arrow_instruction_set(spec)
     else
-      instruction_set = 
+      instruction_set =
         create_left_array_instruction_set(spec)
     end
     instruction_set
@@ -603,7 +606,7 @@ class SequenceLineWriter
     instructions_needed = spec[:instructions_needed]-1
     instruction_set     = Array.new(instructions_needed, :bs.to_s )
     if( last_state_index == first_state_index+1 )
-      instruction_set[first_state_index] = :rns.to_s 
+      instruction_set[first_state_index] = :rns.to_s
     else
       first_state_index.upto(last_state_index-1){|index|
         if( first_state_index - index == 0 )
@@ -615,7 +618,7 @@ class SequenceLineWriter
       instruction_set[last_state_index-1] = :rs.to_s
     end
     instruction_set.push(:cap.to_s)
-    instruction_set 
+    instruction_set
   end
 
   def create_left_array_instruction_set(spec)
@@ -640,7 +643,7 @@ class SequenceLineWriter
       instruction_set[first_state_index-1] = :ns.to_s
     end
     instruction_set.push(:cap.to_s)
-    instruction_set 
+    instruction_set
   end
 
   def create_down_arrow_instruction_set(spec)
@@ -668,7 +671,7 @@ class SequenceDiagramForBlob
         width: @blob.get_max_state_or_signal_width(),
         unique_states: @blob.unique_states,
         transition: transition ).to_padded_sequence_block.to_s
-    } 
+    }
     @result = ""
     @diagram.each{|element| @result += element }
   end
@@ -707,7 +710,7 @@ end
 class SequenceString
   include PackageConfiguration
   DEFAULT_DEPTH = DEFAULT_SEQUENCE_DIAGRAM_DEPTH
-  SELF_REFERENCE_DEPTH = 5 
+  SELF_REFERENCE_DEPTH = 5
   attr_reader :width, :number
 
   @@delimiter        = SEQUENCE_DIAGRAM_STATE_BAR
@@ -796,7 +799,7 @@ class SequenceString
       elsif( line == 2 )
         b      = " ".center(@width)
         b[1]   = @@down_slash
-        b[3]   = @@number % { :number => @number } 
+        b[3]   = @@number % { :number => @number }
         b.slice! @width..-1
         b[-1]  = @@new_line
         block += b
@@ -854,7 +857,7 @@ class UnitBlob
     max_state_width = get_max(:item=>OrderTrace::BEGINNING_STATE)
     max_state_width = get_max(:item=>OrderTrace::END_STATE,
                               :previous_max => max_state_width )
-    # the signal name needs a padding of two, to be dispayed 
+    # the signal name needs a padding of two, to be displayed
     # correctly
     max_state_width = get_max(:item=>OrderTrace::SIGNAL,
                               :previous_max => max_state_width,
@@ -864,7 +867,7 @@ class UnitBlob
 
   def get_max(spec)
     item = spec[:item]
-    max = ( spec.has_key?(:previous_max) == false ) ? 
+    max = ( spec.has_key?(:previous_max) == false ) ?
       0 : spec[:previous_max]
     padding = ( spec.has_key?(:padding) == false ) ?
       0 : spec[:padding]
@@ -873,7 +876,7 @@ class UnitBlob
         max = trace[item].size + padding
       end
     }
-    if( max % 2 == 0 ) 
+    if( max % 2 == 0 )
       max += 1
     end
     max
@@ -882,8 +885,8 @@ class UnitBlob
   def get_states()
     states = []
     @transitions.each{|transition|
-      bs = transition.first_state 
-      es = transition.last_state 
+      bs = transition.first_state
+      es = transition.last_state
       unless( states.include?(bs) )
         states += [ bs ]
       end
@@ -891,7 +894,7 @@ class UnitBlob
         states += [ es ]
       end
     }
-    states 
+    states
   end
 
   def center_state(spec)
@@ -907,8 +910,8 @@ class UnitBlob
     @unique_states.each{|state|
       centered_state_string = center_state(
         :word_width => word_width,
-        :state => state ) 
-        sequence += centered_state_string 
+        :state => state )
+        sequence += centered_state_string
     }
     sequence += "\n"
     sequence
@@ -917,15 +920,15 @@ class UnitBlob
   def create_sequence(trace)
     fs = trace.first_state
     ls = trace.last_state
-    us = self.unique_states 
+    us = self.unique_states
 
     if( fs == ls )
       # create a self referencing sequence block
       us.each{|state|
-      
+
       }
     else
-      # create a transition sequence block 
+      # create a transition sequence block
     end
   end
 end
@@ -938,11 +941,11 @@ class UnitBlobs
     unit_blobs = order_unit_blobs(:trace=>spec[:trace])
     ordered_unit_blobs = []
     unit_blobs.each{|unit_blob|
-      ordered_unit_blobs << get_state_ordered_time_blobs(:unit_blob=>unit_blob) 
+      ordered_unit_blobs << get_state_ordered_time_blobs(:unit_blob=>unit_blob)
     }
-    @unit_blobs = ordered_unit_blobs 
+    @unit_blobs = ordered_unit_blobs
     @unit_blob_object = []
-    @unit_blobs.each{ |unit_blob| 
+    @unit_blobs.each{ |unit_blob|
       @unit_blob_object << UnitBlob.new(:unit_blob=>unit_blob)
     }
     @states, @unique_states = [],[]
@@ -982,12 +985,12 @@ class UnitBlobs
 
   def blob_for( unit_string )
     blob_index = index_for_unit(unit_string)
-    @unit_blob_object[blob_index] 
+    @unit_blob_object[blob_index]
   end
 
   def get_states(spec)
     unit_blob = spec[:unit_blob]
-    unit_blob = ( unit_blob.class != UnitBlob ) ? 
+    unit_blob = ( unit_blob.class != UnitBlob ) ?
                 UnitBlob.new(unit_blob: unit_blob ) :
                 unit_blob
     unit_blob.get_states
@@ -1001,7 +1004,7 @@ class UnitBlobs
   end
 
   def each_trace(spec=nil, &block)
-    if spec == nil 
+    if spec == nil
       self.each_blob{|blob|
         blob.each{|trace|
           block.call(trace)
@@ -1020,7 +1023,7 @@ class InputParser
   def initialize
     parser, user_options = get_parser_and_user_options()
     file_handles         = get_file_handles(user_options)
-    deliver_output( options: user_options, 
+    deliver_output( options: user_options,
                     parser: parser,
                     file_handles: file_handles )
   end
@@ -1045,9 +1048,9 @@ class InputParser
 
       # if there is not output file, just deliver a string
       if( file_handles[:output_file_handle].nil? )
-        puts @diagram 
+        puts @diagram
       else
-        # write our diagram to the the output file
+        # write our diagram to the output file
         @diagram.split("\n").each{|line|
           file_handles[:output_file_handle].puts line
         }
@@ -1061,7 +1064,7 @@ class InputParser
     parser = OptionParser.new do |opts|
       opts.on('-i INPUT_FILE',
               'file containing the trace (required)' ) do |input_file|
-        options[:input_file] = input_file 
+        options[:input_file] = input_file
       end
       opts.on("-o OUTPUT_FILE",
               'file to which the sequence diagram is printed (optional)' ) do |output_file|
@@ -1078,7 +1081,7 @@ class InputParser
 
   def get_file_handles( options )
     output = {}
-    
+
     begin
       output[:output_file_handle] = File.new(options[:output_file], "w" )
     rescue
