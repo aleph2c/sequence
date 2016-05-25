@@ -44,7 +44,11 @@ module OrderTrace
     # find 2012-10-16 13:30:18 in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
     $user_padding = t_string.match(/^([ ]+)\[/)[1] rescue $user_padding = ""
-    time_string   = t_string.match(/^ *\[(.+?)\]/)[1]
+    begin
+      time_string   = t_string.match(/^ *\[(.+?)\]/)[1]
+    rescue
+      next
+    end
     # find 31 in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
     t_unit = t_string.match(/\[#{time_string}\] \[([0-9a-zA-Z_]+)+\]/)[1]

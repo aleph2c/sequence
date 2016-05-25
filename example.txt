@@ -39,5 +39,5 @@
 [2016-05-24 11:56:19] [under_test] event->b d211->d211
 
 [2016-05-24 11:56:19] [under_test] event->entry top->d211
-[2016-05-24 11:56:19] [under_test] event->a(('y': 0, 'x': 0, 'z': 0, 'tik': 6)) d211->d211
+[2016-05-24 11:56:19] [under_test] event->a d211->d211
 [2016-05-24 11:56:19] [under_test] event->b d211->d211
