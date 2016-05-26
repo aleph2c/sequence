@@ -78,7 +78,7 @@ The **sequence_diagram.txt** would look like this:
 Example with a statechart and its trace output
 ===============================================
 ![Test Pattern](./TestingStatePattern.gif)
-Suppose the following [statechart](https://github.com/aleph2c/miros) was started in state S, then was sent the following
+Suppose the above [statechart](https://github.com/aleph2c/miros) was started in state S, then was sent the following
 series of events:
 
   **{a, b, c, d, e, f, g, h, g, f, e, d, c, b, a}**
@@ -102,11 +102,11 @@ This could generate the following trace.
     [2016-05-26 10:31:08.858] [example_chart] event->b() S211->S211
     [2016-05-26 10:31:08.860] [example_chart] event->a() S211->S211
 
-Support the above trace was captured in the **trace.txt file**, and you ran:
+If the above trace was in the **trace.txt** file, you could run:
 
     > ruby sequence.rb -i "trace.txt" -o "sequence_diagram.txt"
 
-The **sequence_diagram.txt** file would look like this:
+The resulting **sequence_diagram.txt** file would look like this:
 
     [ Chart: example_chart ] (?)
         top       S211        S11    
@@ -167,28 +167,27 @@ The **sequence_diagram.txt** file would look like this:
 Sequence can deal with noise
 ============================
 Suppose your **trace.txt** file was filled with trace information interleaved
-with spy (engineering noise) information:
+with spy output (engineering noise):
 
-    testing(top-entry);                                                                            
-    testing(top-init);                                                                             
-    testing(d2-entry);                                                                             
-    testing(d2-init);                                                                              
-    testing(d21-entry);                                                                            
-    testing(d211-entry);                                                                           
+    spy(top-entry);                                                                            
+    spy(top-init);                                                                             
+    spy(d2-entry);                                                                             
+    spy(d2-init);                                                                              
+    spy(d21-entry);                                                                            
+    spy(d211-entry);                                                                           
     [2016-05-25 11:36:48] [under_test] event->entry() top->d211                                    
-    testing(d21-a-{'y': 0, 'x': 0, 'z': 0, 'tik': 0});                                             
-    testing(d211-exit-{'y': 0, 'x': 0, 'z': 0, 'tik': 1});                                         
-    testing(d21-exit-{'y': 0, 'x': 0, 'z': 0, 'tik': 2});                                          
-    testing(d21-entry-{'y': 0, 'x': 0, 'z': 0, 'tik': 3});                                         
-    testing(d21-init-{'y': 0, 'x': 0, 'z': 0, 'tik': 4});                                          
-    testing(d211-entry-{'y': 0, 'x': 0, 'z': 0, 'tik': 5});                                        
+    spy(d21-a-{'y': 0, 'x': 0, 'z': 0, 'tik': 0});                                             
+    spy(d211-exit-{'y': 0, 'x': 0, 'z': 0, 'tik': 1});                                         
+    spy(d21-exit-{'y': 0, 'x': 0, 'z': 0, 'tik': 2});                                          
+    spy(d21-entry-{'y': 0, 'x': 0, 'z': 0, 'tik': 3});                                         
+    spy(d21-init-{'y': 0, 'x': 0, 'z': 0, 'tik': 4});                                          
+    spy(d211-entry-{'y': 0, 'x': 0, 'z': 0, 'tik': 5});                                        
     [2016-05-25 11:36:48] [under_test] event->a({'y': 0, 'x': 0, 'z': 0, 'tik': 6}) d211->d211     
-    testing(d21-b);                                                                                
-    testing(d211-exit);                                                                            
-    testing(d211-entry);                                                                           
+    spy(d21-b);                                                                                
+    spy(d211-exit);                                                                            
+    spy(d211-entry);                                                                           
     
-If you ran **sequence.rb**, it would ignore the noise and generate the following
-diagram from the trace information.
+A run of **sequence.rb** would generate the following:
 
 
     [ Chart: under_test ] (?)
@@ -206,7 +205,7 @@ diagram from the trace information.
 Sequence can document concurrent statecharts
 ============================================
 Suppose you would like to document how two concurrent statecharts are working
-together.  First you would have their trace output interleaved in on **trace.txt** file:
+together.  First you would have their trace output interleaved in a **trace.txt** file:
 
     [2016-02-18 08:21:25] [31] uiErrNum->2 siErrVal->555 FAULT: AC Output Over Voltage
     [2016-02-18 08:21:25] [31] Trig->BB(514) ActiveTestComplete->InvertRampDown
@@ -228,7 +227,7 @@ together.  First you would have their trace output interleaved in on **trace.txt
     [2016-02-18 08:21:42] [00] Trig->N(559) EngagingInvertSupport->InvertSupport
 
 
-Then you would run **sequence.rb** on this trace to generate the following output:
+Then you would run **sequence.rb** to generate the following output:
 
     [ Chart: 31 ] (?)
     ActiveTestComplete   InvertRampDown      QualifyingAC       InvertSelect      EngagingInvert         Invert       ActiveTestofRelays 
@@ -317,17 +316,17 @@ you feel the need for speed, put the following into your .vimrc file.
 ```
 
 Change the pathing of **'C:/github/sequence/sequence.rb'** to where you have placed
-the 'sequence.rb' file on your system, save and source your .vimrc file.  Now
+the 'sequence.rb' file on your system. Save and source your .vimrc file.  Now
 copy some trace output into a buffer, select it, then hit <leader><c-t>.  You
-should see that's its sequence diagram is placed after your trace.
+should see that's its sequence diagram is placed after your trace log.
 
 FAQ
 ===
 Why did you write sequence.rb in Ruby and miros in Python?
 
-> I didn't write miros, I extended it.  I just recently learned Python.  I wrote
+> I didn't write miros, I extended it.  I used miros to learn Python.  I wrote
 > sequence.rb before I learned Python.
 
 Are you going to port sequence.rb to Python?
 
-> Maybe
+> If people ask for it.
