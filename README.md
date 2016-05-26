@@ -6,7 +6,7 @@ from this:
       [2013-3-24 12:15:5.201] [this_process] cTrig->begin() spec->statechart
       [2013-3-24 12:15:5.201] [this_process] cTrig->prototype() statechart->code
       [2013-3-24 12:15:5.205] [this_process] cTrig->debug() code->code
-      [2013-3-24 12:15:5.205] [this_process] cTrig->debug() code->trace
+      [2013-3-24 12:15:5.205] [this_process] cTrig->communicate() code->trace
       [2013-3-24 12:15:5.205] [this_process] cTrig->sequence.rb() trace->sequence_diagram
 
 to this:
@@ -22,7 +22,7 @@ to this:
               |                |                 debug()         |                |
               |                |                 /               |                |
               |                |                <                |                |
-              |                |                +----debug()---->|                |
+              |                |                +-communicate()->|                |
               |                |                |      (?)       |                |
               |                |                |                +-sequence.rb()->|
               |                |                |                |      (?)       |
