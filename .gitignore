@@ -1,3 +1,11 @@
-*.swp
-*/**/.svp
+**.byebug_history
+**.gem
+*.rbc
+
+## Documentation cache and generated files:
+/.yardoc/
+/_yardoc/
+/doc/
+/rdoc/
+
 *~

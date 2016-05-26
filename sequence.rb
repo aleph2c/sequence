@@ -76,8 +76,9 @@ module OrderTrace
               :beginning_state=>t_beginning_string,
               :ending_state=>t_ending_string,
               :string=>t_string}
+      time = Time.parse(time_string)
       trace_array << [
-       Time.parse(time_string),
+       time,
        t_unit,
        t_signal,
        signal_name,
