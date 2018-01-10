@@ -51,7 +51,7 @@ module OrderTrace
     end
     # find 31 in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
-    t_unit = t_string.match(/\[#{time_string}\] \[([0-9a-zA-Z_]+)+\]/)[1]
+    t_unit = t_string.match(/\[#{time_string}\] \[([0-9a-zA-Z_.]+)+\]/)[1]
     # find P(522) in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
     t_signal = t_string.match(/(.)?->(.+?\))/)[2] rescue nil

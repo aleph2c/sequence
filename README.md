@@ -292,6 +292,7 @@ you feel the need for speed, put the following into your .vimrc file.
         let [lnum2, col2] = getpos("'>")[1:2]
         return getline(lnum1,lnum2)
       endfunction
+
       """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
       "           Write a visual selection to file, given that file's name           "
       """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -300,6 +301,7 @@ you feel the need for speed, put the following into your .vimrc file.
         let input_strings = s:get_lines_from_visual_selection()
         return writefile(input_strings,file_name)
       endfunction
+
       """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
       "          Convert a visually selected trace into a Sequence Diagram           "
       """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
