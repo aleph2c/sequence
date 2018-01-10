@@ -284,6 +284,25 @@ press a hotkey and output the sequence diagram directly into your document?  If
 you feel the need for speed, put the following into your .vimrc file.
       
 ```vimscript
+      """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+      "               Get the number of lines from a visual selection                "
+      """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+      function! s:get_lines_from_visual_selection()
+        let [lnum1, col1] = getpos("'<")[1:2]
+        let [lnum2, col2] = getpos("'>")[1:2]
+        return getline(lnum1,lnum2)
+      endfunction
+      """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+      "           Write a visual selection to file, given that file's name           "
+      """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+      function! s:write_visual_selection_to_file(file_name)
+        let file_name = a:file_name
+        let input_strings = s:get_lines_from_visual_selection()
+        return writefile(input_strings,file_name)
+      endfunction
+      """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+      "          Convert a visually selected trace into a Sequence Diagram           "
+      """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
       function! s:call_trace_to_sequence_diagram(file_in_which_to_write_trace, diagram_output_file_name)
           let s:path_to_sequence = 'C:/github/sequence/sequence.rb'
           normal mz
