@@ -40,7 +40,10 @@ module OrderTrace
    trace_array = []
    trace_hash = {}
    # break up the input based on there newline characters
-   trace_string.split("\n").each{|t_string|
+   trace_string.split("\n").each{|tt_string|
+     # remove [+t] from: [+t] [2018-05-04 09:23:29.177773] [04ccc_ao] e->start_at() top->outer
+     tt_string.gsub!(/\[.+?\] (\[.+?\] )(\[.+?\] )(.+)/, '\1\2\3')
+     t_string = tt_string
     # find 2012-10-16 13:30:18 in
     # [2012-10-16 13:30:18] [31] Trig->P(522) QualifyingAC->PendingAcGood
     $user_padding = t_string.match(/^([ ]+)\[/)[1] rescue $user_padding = ""
@@ -359,6 +362,10 @@ class SequenceBlock
       if( line == 1 )
         if( named == true )
           b = @signal.center(@width, @@signal_dash )
+          if b[-2,2] == @@signal_dash*2
+            c = @@signal_dash + b.chomp(@@signal_dash)
+            b = c
+          end
         else
           b = @@signal_dash*@width
         end
@@ -866,7 +873,7 @@ class UnitBlob
     # correctly
     max_state_width = get_max(:item=>OrderTrace::SIGNAL,
                               :previous_max => max_state_width,
-                              :padding => 3 )
+                              :padding => 4 )
     max_state_width
   end
 
@@ -1050,6 +1057,8 @@ class InputParser
       @diagram =
         SequenceDiagram.new(trace: file_handles[:input_file_handle].read).to_s
       file_handles[:input_file_handle].close
+
+      @diagram = @diagram.to_s.split("\n").map(&:rstrip).join("\n")
 
       # if there is not output file, just deliver a string
       if( file_handles[:output_file_handle].nil? )
