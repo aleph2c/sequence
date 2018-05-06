@@ -1032,8 +1032,9 @@ TARGET_13
 end
 describe SequenceDiagramForBlob do
   before do
-   @blob_31 = UnitBlobs.new( trace: $hard_trace ).blob_for("31")
-   @blob_00 = UnitBlobs.new( trace: $hard_trace ).blob_for("00")
+   debugging_thing =  UnitBlobs.new( trace: $hard_trace )
+   @blob_31 = debugging_thing.blob_for("31")
+   @blob_00 = debugging_thing.blob_for("00")
   end
   it "should create a sequence diagram for a blob" do
     sdfb = SequenceDiagramForBlob.new( blob: @blob_31 )
@@ -1189,7 +1190,7 @@ TARGET_16
     # place 'debugger' here to see the output of this command
     target_17=<<TARGET_17
     [ Unit: 31 ] (?)
-    [ Chart: 31 ] (?)
+    [Statechart: 31] (?)
      QualifyingAC   PendingAcGood EngagingAcGood     AcGood     EngagingCharge    XfrmReset       Charge      EngagingBulk       Bulk
            +---P(522)---->|              |              |              |              |              |              |              |
            |     (?)      |              |              |              |              |              |              |              |
@@ -1208,7 +1209,7 @@ TARGET_16
            |              |              |              |              |              |              |              +---KK(670)--->|
            |              |              |              |              |              |              |              |     (?)      |
 
-    [ Chart: 00 ] (?)
+    [Statechart: 00] (?)
      QualifyingAC   PendingAcGood EngagingAcGood     AcGood     EngagingCharge    XfrmReset       Charge      EngagingBulk       Bulk
            +---P(522)---->|              |              |              |              |              |              |              |
            |     (?)      |              |              |              |              |              |              |              |
@@ -1255,7 +1256,7 @@ describe SequenceDiagram do
   [+t] [2018-05-04 09:23:49.233582] [2771f_ao] e->other_to_inner() outer->inner
 HARD_SNOOP_TRACE
   $target_18 =<<TARGET_18
-  [ Chart: 04ccc_ao ] (?)
+  [Statechart: 04ccc_ao] (?)
         top           outer          inner     
          +--start_at()->|              |
          |     (?)      |              |
@@ -1270,7 +1271,7 @@ HARD_SNOOP_TRACE
          |              +--to_inner()->|
          |              |     (?)      |
 
-  [ Chart: 2771f_ao ] (?)
+  [Statechart: 2771f_ao] (?)
            top                 outer                inner
             +-----start_at()---->|                    |
             |        (?)         |                    |

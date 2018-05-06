@@ -699,7 +699,7 @@ class SequenceDiagram
     @unit_blobs = UnitBlobs.new(spec)
     @sequence_diagram = $user_padding
     @unit_blobs.each{|unit_blob|
-      @sequence_diagram += "[ Chart: %{unit_blob_number} ]" % {:unit_blob_number => unit_blob.unit_number }
+      @sequence_diagram += "[Statechart: %{unit_blob_number}]" % {:unit_blob_number => unit_blob.unit_number }
       @sequence_diagram += " (?)"
       @sequence_diagram += "\n"
       @sequence_diagram += $user_padding
