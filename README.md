@@ -340,14 +340,3 @@ Change the pathing of **'C:/github/sequence/sequence.rb'** to where you have pla
 the 'sequence.rb' file on your system. Save and source your .vimrc file.  Now
 copy some trace output into a buffer, select it, then hit <leader><c-t>.  You
 should see that's its sequence diagram is placed after your trace log.
-
-FAQ
-===
-Why did you write sequence.rb in Ruby and miros in Python?
-
-> I didn't write miros, I extended it.  I used miros to learn Python.  I wrote
-> sequence.rb before I learned Python.
-
-Are you going to port sequence.rb to Python?
-
-> If people ask for it.
