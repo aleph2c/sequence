@@ -1,7 +1,4 @@
-begin
-  # don't break if someone hasn't installed a debugger
-  require "byebug"
-end
+#require "byebug"
 
 require "time"
 require "optparse"
